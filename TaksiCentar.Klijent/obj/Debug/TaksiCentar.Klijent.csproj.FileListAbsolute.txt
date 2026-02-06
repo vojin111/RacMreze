@@ -1,0 +1,11 @@
+E:\RacMrezeProj\TaksiCentar.Klijent\bin\Debug\TaksiCentar.Klijent.exe.config
+E:\RacMrezeProj\TaksiCentar.Klijent\bin\Debug\TaksiCentar.Klijent.exe
+E:\RacMrezeProj\TaksiCentar.Klijent\bin\Debug\TaksiCentar.Klijent.pdb
+E:\RacMrezeProj\TaksiCentar.Klijent\obj\Debug\TaksiCentar.Klijent.csproj.AssemblyReference.cache
+E:\RacMrezeProj\TaksiCentar.Klijent\obj\Debug\TaksiCentar.Klijent.csproj.CoreCompileInputs.cache
+E:\RacMrezeProj\TaksiCentar.Klijent\obj\Debug\TaksiCentar.Klijent.exe
+E:\RacMrezeProj\TaksiCentar.Klijent\obj\Debug\TaksiCentar.Klijent.pdb
+E:\RacMrezeProj\TaksiCentar.Klijent\bin\Debug\TaksiCentar.Modeli.dll
+E:\RacMrezeProj\TaksiCentar.Klijent\bin\Debug\TaksiCentar.Modeli.pdb
+E:\RacMrezeProj\TaksiCentar.Klijent\obj\Debug\TaksiCen.0BFA5D2C.Up2Date
+E:\RacMrezeProj\TaksiCentar.Klijent\obj\Debug\TaksiCentar.Klijent.exe.config

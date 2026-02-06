@@ -1,0 +1,10 @@
+E:\RacMrezeProj\TaksiCentar.Vozilo\bin\Debug\TaksiCentar.Vozilo.exe.config
+E:\RacMrezeProj\TaksiCentar.Vozilo\bin\Debug\TaksiCentar.Vozilo.exe
+E:\RacMrezeProj\TaksiCentar.Vozilo\bin\Debug\TaksiCentar.Vozilo.pdb
+E:\RacMrezeProj\TaksiCentar.Vozilo\obj\Debug\TaksiCentar.Vozilo.csproj.AssemblyReference.cache
+E:\RacMrezeProj\TaksiCentar.Vozilo\obj\Debug\TaksiCentar.Vozilo.csproj.CoreCompileInputs.cache
+E:\RacMrezeProj\TaksiCentar.Vozilo\obj\Debug\TaksiCentar.Vozilo.exe
+E:\RacMrezeProj\TaksiCentar.Vozilo\obj\Debug\TaksiCentar.Vozilo.pdb
+E:\RacMrezeProj\TaksiCentar.Vozilo\bin\Debug\TaksiCentar.Modeli.dll
+E:\RacMrezeProj\TaksiCentar.Vozilo\bin\Debug\TaksiCentar.Modeli.pdb
+E:\RacMrezeProj\TaksiCentar.Vozilo\obj\Debug\TaksiCen.0536B126.Up2Date

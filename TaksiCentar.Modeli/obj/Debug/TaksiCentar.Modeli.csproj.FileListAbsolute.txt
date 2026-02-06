@@ -1,0 +1,6 @@
+E:\RacMrezeProj\TaksiCentar.Modeli\bin\Debug\TaksiCentar.Modeli.dll
+E:\RacMrezeProj\TaksiCentar.Modeli\bin\Debug\TaksiCentar.Modeli.pdb
+E:\RacMrezeProj\TaksiCentar.Modeli\obj\Debug\TaksiCentar.Modeli.csproj.AssemblyReference.cache
+E:\RacMrezeProj\TaksiCentar.Modeli\obj\Debug\TaksiCentar.Modeli.csproj.CoreCompileInputs.cache
+E:\RacMrezeProj\TaksiCentar.Modeli\obj\Debug\TaksiCentar.Modeli.dll
+E:\RacMrezeProj\TaksiCentar.Modeli\obj\Debug\TaksiCentar.Modeli.pdb

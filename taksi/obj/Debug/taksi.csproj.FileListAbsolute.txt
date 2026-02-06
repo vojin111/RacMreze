@@ -1,0 +1,7 @@
+E:\RacMrezeProj\taksi\bin\Debug\taksi.exe.config
+E:\RacMrezeProj\taksi\bin\Debug\taksi.exe
+E:\RacMrezeProj\taksi\bin\Debug\taksi.pdb
+E:\RacMrezeProj\taksi\obj\Debug\taksi.csproj.AssemblyReference.cache
+E:\RacMrezeProj\taksi\obj\Debug\taksi.csproj.CoreCompileInputs.cache
+E:\RacMrezeProj\taksi\obj\Debug\taksi.exe
+E:\RacMrezeProj\taksi\obj\Debug\taksi.pdb

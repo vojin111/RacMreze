@@ -1,0 +1,11 @@
+E:\RacMrezeProj\TaksiCentar.Server\bin\Debug\TaksiCentar.Server.exe.config
+E:\RacMrezeProj\TaksiCentar.Server\bin\Debug\TaksiCentar.Server.exe
+E:\RacMrezeProj\TaksiCentar.Server\bin\Debug\TaksiCentar.Server.pdb
+E:\RacMrezeProj\TaksiCentar.Server\obj\Debug\TaksiCentar.Server.csproj.AssemblyReference.cache
+E:\RacMrezeProj\TaksiCentar.Server\obj\Debug\TaksiCentar.Server.csproj.CoreCompileInputs.cache
+E:\RacMrezeProj\TaksiCentar.Server\obj\Debug\TaksiCentar.Server.exe
+E:\RacMrezeProj\TaksiCentar.Server\obj\Debug\TaksiCentar.Server.pdb
+E:\RacMrezeProj\TaksiCentar.Server\bin\Debug\TaksiCentar.Modeli.dll
+E:\RacMrezeProj\TaksiCentar.Server\bin\Debug\TaksiCentar.Modeli.pdb
+E:\RacMrezeProj\TaksiCentar.Server\obj\Debug\TaksiCen.40FFBAAB.Up2Date
+E:\RacMrezeProj\TaksiCentar.Server\obj\Debug\TaksiCentar.Server.exe.config
