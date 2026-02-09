@@ -21,10 +21,27 @@ namespace TaksiCentar.Klijent
             Console.Write("Unesi krajnju tačku: ");
             string end = Console.ReadLine();
 
-            double x = 5;
-            double y = 5;
+            double sx = 5;
+            double sy = 5;
+            double endX = 15;
+            double endY = 8;
 
-            string request = "REQ|" + start + "|" + end + "|" + x + "|" + y;
+            Console.WriteLine($"Podrazumevane koordinate: start=({sx},{sy}) kraj=({endX},{endY})");
+            Console.Write("Unesi start X (Enter za default): ");
+            string inSx = Console.ReadLine();
+            Console.Write("Unesi start Y (Enter za default): ");
+            string inSy = Console.ReadLine();
+            Console.Write("Unesi kraj X (Enter za default): ");
+            string inEx = Console.ReadLine();
+            Console.Write("Unesi kraj Y (Enter za default): ");
+            string inEy = Console.ReadLine();
+
+            if (!string.IsNullOrWhiteSpace(inSx)) double.TryParse(inSx, out sx);
+            if (!string.IsNullOrWhiteSpace(inSy)) double.TryParse(inSy, out sy);
+            if (!string.IsNullOrWhiteSpace(inEx)) double.TryParse(inEx, out endX);
+            if (!string.IsNullOrWhiteSpace(inEy)) double.TryParse(inEy, out endY);
+
+            string request = "REQ|" + start + "|" + end + "|" + sx + "|" + sy + "|" + endX + "|" + endY;
 
             try
             {

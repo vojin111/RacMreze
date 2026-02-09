@@ -15,7 +15,10 @@ namespace TaksiCentar.Modeli
         public string KrajnjaTacka { get; set; }
 
         public double X { get; set; } // koordinate klijenta
-        public double Y { get; set; }
+        public double Y { get; set; } // koordinate klijenta
+
+        public double KrajX { get; set; } // koordinate krajnje tacke
+        public double KrajY { get; set; }
 
         public string Status { get; set; } = "Ceka"; // Ceka, Prihvaceno, Zavrseno
         public double EtaMin { get; set; }

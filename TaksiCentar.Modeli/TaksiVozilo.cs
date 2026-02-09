@@ -14,6 +14,9 @@ namespace TaksiCentar.Modeli
         public double PredjenaKm { get; set; }
         public decimal Zarada { get; set; }
 
+        public int BrojMusterija { get; set; }
+        public int Port { get; set; }
+
         public override string ToString()
         {
             return $"Vozilo {Id} Pos=({X},{Y}) Status={Status} Km={PredjenaKm} Zarada={Zarada}";

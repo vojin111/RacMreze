@@ -10,6 +10,15 @@ namespace TaksiCentar.Modeli
         public Guid KlijentId { get; set; }
         public Guid VoziloId { get; set; }
 
+        // Podaci o klijentu / ruti (da vozilo zna gde ide)
+        public string PocetnaTacka { get; set; }
+        public string KrajnjaTacka { get; set; }
+
+        public double PocX { get; set; }
+        public double PocY { get; set; }
+        public double KrajX { get; set; }
+        public double KrajY { get; set; }
+
         public string StatusZadatka { get; set; } = "Aktivan"; // Aktivan, Zavrsen
         public double PredjenaRazdaljina { get; set; }        // km
 

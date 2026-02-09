@@ -10,6 +10,7 @@ namespace TaksiCentar.Modeli
     public class VoziloUpdate
     {
         public Guid VoziloId { get; set; }
+        public int Port { get; set; }
 
         public double X { get; set; }
         public double Y { get; set; }

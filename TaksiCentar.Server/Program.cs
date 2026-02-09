@@ -31,11 +31,11 @@ namespace TaksiCentar.Server
         static UdpClient udpListener;
 
         static object clientLock = new object();
-        static StreamWriter aktivniKlijentWriter = null;
-        static Guid? aktivniZadatakZaKlijenta = null;
-        static double ciljX = 15; // simulacija "krajnje tacke"
-        static double ciljY = 8;
+        static Dictionary<Guid, StreamWriter> klijentWriters = new Dictionary<Guid, StreamWriter>();
+        static Dictionary<Guid, TcpClient> klijentConnections = new Dictionary<Guid, TcpClient>();
 
+        static Dictionary<Guid, IPEndPoint> voziloEndpoints = new Dictionary<Guid, IPEndPoint>();
+        
 
 
         static void Main(string[] args)
@@ -93,11 +93,17 @@ namespace TaksiCentar.Server
                 VoziloUpdate upd = Serializer.FromBytes<VoziloUpdate>(data);
                 Console.WriteLine("UDP UPDATE stigao: Vozilo=" + upd.VoziloId + " Status=" + upd.Status);
 
+                // zapamti endpoint vozila (port je port na kojem vozilo prima zadatke)
+                if (remote is IPEndPoint rep)
+                {
+                    voziloEndpoints[upd.VoziloId] = rep;
+                }
+
                 TaksiVozilo v = vozila.FirstOrDefault(x => x.Id == upd.VoziloId);
                 if (v == null)
                 {
                     // novo vozilo (dinamički dodaj)
-                    v = new TaksiVozilo { Id = upd.VoziloId };
+                    v = new TaksiVozilo { Id = upd.VoziloId, Port = upd.Port };
                     vozila.Add(v);
                 }
 
@@ -106,6 +112,7 @@ namespace TaksiCentar.Server
                 v.Status = upd.Status;
                 v.PredjenaKm = upd.PredjenaKm;
                 v.Zarada = upd.Zarada;
+                v.Port = upd.Port;
 
                 if (upd.ZadatakId.HasValue)
                 {
@@ -129,32 +136,42 @@ namespace TaksiCentar.Server
                         if (v != null) v.Status = "Slobodno";
 
                         // nađi klijentski zahtev i završi ga (u ovoj verziji mapiramo po “prvom prihvaćenom”)
-                        KlijentZahtev kz = zahtevi.FirstOrDefault(x => x.Status == "Prihvaceno");
+                        KlijentZahtev kz = zahtevi.FirstOrDefault(x => x.Id == z.KlijentId);
                         if (kz != null) kz.Status = "Zavrseno";
+
+                        if (v != null) v.BrojMusterija += 1;
                     }
                 }
 
-                lock (clientLock)
+                // Pošalji update odgovarajućem klijentu (po zadatku)
+                if (upd.ZadatakId.HasValue)
                 {
-                    if (aktivniKlijentWriter != null && aktivniZadatakZaKlijenta.HasValue)
+                    Zadatak z = aktivniZadaci.FirstOrDefault(x => x.Id == upd.ZadatakId.Value);
+                    if (z != null)
                     {
-                        // razdaljina do cilja (simulacija)
-                        double dist = Dist(upd.X, upd.Y, ciljX, ciljY);
-                        double etaMin = (dist / 30.0) * 60.0; // 30 km/h
-
-                        aktivniKlijentWriter.WriteLine(
-                            $"POS|{upd.X:0.0}|{upd.Y:0.0}|{upd.Status}|ETAmin={etaMin:0.0}"
-                        );
-
-                        if (upd.ZavrsetakVoznje)
+                        StreamWriter w = null;
+                        lock (clientLock)
                         {
-                            aktivniKlijentWriter.WriteLine("ZAVRSENO");
-                            aktivniKlijentWriter = null;
-                            aktivniZadatakZaKlijenta = null;
+                            klijentWriters.TryGetValue(z.KlijentId, out w);
+                        }
+
+                        if (w != null)
+                        {
+                            // ETA zavisi od faze: Odlazak -> do starta, Voznja -> do kraja
+                            double tx = (upd.Status == "Odlazak") ? z.PocX : z.KrajX;
+                            double ty = (upd.Status == "Odlazak") ? z.PocY : z.KrajY;
+
+                            double dist = Dist(upd.X, upd.Y, tx, ty);
+                            double etaMin = (dist / BRZINA_KM_H) * 60.0;
+
+                            w.WriteLine($"POS|x={upd.X:0.0}|y={upd.Y:0.0}|status={upd.Status}|ETAmin={etaMin:0.0}");
+                            if (upd.ZavrsetakVoznje)
+                            {
+                                w.WriteLine("ZAVRSENO");
+                            }
                         }
                     }
                 }
-
             }
             catch
             {
@@ -177,9 +194,9 @@ namespace TaksiCentar.Server
 
                 Console.WriteLine("RAW TCP: [" + req + "]");
 
-                // format: REQ|poc|kraj|x|y
+                // format: REQ|poc|kraj|sx|sy|ex|ey
                 string[] parts = req.Split('|');
-                if (parts.Length < 5 || parts[0] != "REQ")
+                if (parts.Length < 7 || parts[0] != "REQ")
                 {
                     byte[] bad = Encoding.UTF8.GetBytes("ERR: Bad request\n");
                     await stream.WriteAsync(bad, 0, bad.Length);
@@ -188,20 +205,24 @@ namespace TaksiCentar.Server
 
                 string poc = parts[1];
                 string kraj = parts[2];
-                double x = double.Parse(parts[3]);
-                double y = double.Parse(parts[4]);
+                double sx = double.Parse(parts[3]);
+                double sy = double.Parse(parts[4]);
+                double ex = double.Parse(parts[5]);
+                double ey = double.Parse(parts[6]);
 
                 KlijentZahtev kz = new KlijentZahtev
                 {
                     PocetnaTacka = poc,
                     KrajnjaTacka = kraj,
-                    X = x,
-                    Y = y,
+                    X = sx,
+                    Y = sy,
+                    KrajX = ex,
+                    KrajY = ey,
                     Status = "Ceka"
                 };
                 zahtevi.Add(kz);
 
-                TaksiVozilo vozilo = NadjiNajblizeSlobodnoVozilo(x, y);
+                TaksiVozilo vozilo = NadjiNajblizeSlobodnoVozilo(sx, sy);
                 if (vozilo == null)
                 {
                     byte[] none = Encoding.UTF8.GetBytes("NEMA_SLOBODNIH\n");
@@ -210,7 +231,7 @@ namespace TaksiCentar.Server
                 }
 
                 // ETA = dist / brzina
-                double dist = Dist(vozilo.X, vozilo.Y, x, y);
+                double dist = Dist(vozilo.X, vozilo.Y, sx, sy);
                 double etaH = dist / BRZINA_KM_H;
                 double etaMin = etaH * 60.0;
                 kz.EtaMin = Math.Round(etaMin, 1);
@@ -220,6 +241,12 @@ namespace TaksiCentar.Server
                 {
                     KlijentId = kz.Id,
                     VoziloId = vozilo.Id,
+                    PocetnaTacka = kz.PocetnaTacka,
+                    KrajnjaTacka = kz.KrajnjaTacka,
+                    PocX = kz.X,
+                    PocY = kz.Y,
+                    KrajX = kz.KrajX,
+                    KrajY = kz.KrajY,
                     StatusZadatka = "Aktivan",
                     PredjenaRazdaljina = 0
                 };
@@ -231,12 +258,12 @@ namespace TaksiCentar.Server
 
                 lock (clientLock)
                 {
-                    aktivniKlijentWriter = writer;
-                    aktivniZadatakZaKlijenta = z.Id;
+                    klijentWriters[kz.Id] = writer;
+                    klijentConnections[kz.Id] = client;
                 }
 
                 // prva poruka klijentu (Samo jednom!)
-                writer.WriteLine($"PRIHVACENO|Vozilo={vozilo.Id}|ETAmin={kz.EtaMin}");
+                writer.WriteLine($"PRIHVACENO|Vozilo={vozilo.Id}|Port={vozilo.Port}|ETAmin={kz.EtaMin}");
 
                 // ažuriraj status
                 vozilo.Status = "Odlazak";
@@ -246,7 +273,12 @@ namespace TaksiCentar.Server
                 byte[] data = Serializer.ToBytes(z);
                 using (UdpClient udp = new UdpClient())
                 {
-                    IPEndPoint voziloEP = new IPEndPoint(IPAddress.Loopback, 7001);
+                    IPEndPoint voziloEP;
+                    if (!voziloEndpoints.TryGetValue(vozilo.Id, out voziloEP))
+                    {
+                        // fallback: ako jos nije stigao update, salji na port upisan u vozilo
+                        voziloEP = new IPEndPoint(IPAddress.Loopback, vozilo.Port);
+                    }
                     udp.Send(data, data.Length, voziloEP);
                 }
 
@@ -256,14 +288,17 @@ namespace TaksiCentar.Server
                 // (Klijent će prekinuti kad dobije ZAVRSENO)
                 while (true)
                 {
-                    await Task.Delay(1000);
-                    lock (clientLock)
-                    {
-                        // ako je server već poslao ZAVRSENO i obrisao writer, izađi
-                        if (aktivniKlijentWriter == null)
-                            break;
-                    }
+                    await Task.Delay(500);
+                    if (kz.Status == "Zavrseno") break;
                 }
+
+                // cleanup klijent konekcije
+                lock (clientLock)
+                {
+                    klijentWriters.Remove(kz.Id);
+                    klijentConnections.Remove(kz.Id);
+                }
+
             }
         }
 
